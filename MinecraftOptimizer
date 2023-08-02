@@ -1,0 +1,42 @@
+import java.io.IOException;
+
+public class MinecraftOptimizer {
+
+    public static void main(String[] args) {
+        optimizeMinecraftPerformance();
+    }
+
+    public static void optimizeMinecraftPerformance() {
+        // JVM Arguments for Minecraft optimization
+        String[] jvmArguments = {
+            "-Xmx2G",
+            "-Xms6G",
+            "-XX:+UseG1GC",
+            "-XX:+UnlockExperimentalVMOptions",
+            "-XX:G1NewSizePercent=20",
+            "-XX:G1ReservePercent=20",
+            "-XX:MaxGCPauseMillis=50",
+            "-XX:+DisableExplicitGC",
+            "-XX:+ParallelRefProcEnabled"
+        };
+
+        // Build the command to run "java -jar minecraft.jar"
+        ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", "minecraft.jar");
+
+        // Apply JVM Arguments
+        for (String arg : jvmArguments) {
+            processBuilder.command().add(arg);
+        }
+
+        // Redirect standard output and error streams to the current process's streams
+        processBuilder.inheritIO();
+
+        // Start Minecraft
+        try {
+            Process process = processBuilder.start();
+            process.waitFor(); // Wait for the process to complete (optional)
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
